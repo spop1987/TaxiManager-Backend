@@ -1,0 +1,50 @@
+[
+    {
+        "VehicleType": "taxi",
+        "Registration": "URN-953",
+        "Brand": "Renault",
+        "Model": "Citius",
+        "Year": "2010",
+        "Nickname": "Citius 1"
+    },
+    {
+        "VehicleType": "taxi",
+        "Registration": "URM-841",
+        "Brand": "Renault",
+        "Model": "Citius",
+        "Year": "2010",
+        "Nickname": "Citius 2"
+    },
+    {
+        "VehicleType": "taxi",
+        "Registration": "TJO-834",
+        "Brand": "Chevrolet",
+        "Model": "Cobalt",
+        "Year": "2010",
+        "Nickname": "Cobalt"
+    },
+    {
+        "VehicleType": "taxi",
+        "Registration": "URM-401",
+        "Brand": "Daewoo",
+        "Model": "Cielo",
+        "Year": "2010",
+        "Nickname": "Daewoo"
+    },
+    {
+        "VehicleType": "taxi",
+        "Registration": "URM-415",
+        "Brand": "Chevrolet",
+        "Model": "Matiz",
+        "Year": "2010",
+        "Nickname": "Matiz"
+    },
+    {
+        "VehicleType": "taxi",
+        "Registration": "URM-350",
+        "Brand": "Chevrolet",
+        "Model": "Corsa",
+        "Year": "2010",
+        "Nickname": "Corsa"
+    }
+]
