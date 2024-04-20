@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiManagerInfrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiManagerService", "TaxiManagerService\TaxiManagerService.csproj", "{0C4D10D8-5499-4167-91A5-29FFFE729CD8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6BFFFD12-B2CA-41B1-9B1F-3B1B9E712B7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiManager.Api.IntegrationTests", "tests\TaxiManager.Api.IntegrationTests\TaxiManager.Api.IntegrationTests.csproj", "{500A3E10-23B9-4858-81F7-4D1F41C49AA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,12 @@ Global
 		{0C4D10D8-5499-4167-91A5-29FFFE729CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C4D10D8-5499-4167-91A5-29FFFE729CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C4D10D8-5499-4167-91A5-29FFFE729CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{500A3E10-23B9-4858-81F7-4D1F41C49AA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{500A3E10-23B9-4858-81F7-4D1F41C49AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{500A3E10-23B9-4858-81F7-4D1F41C49AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{500A3E10-23B9-4858-81F7-4D1F41C49AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{500A3E10-23B9-4858-81F7-4D1F41C49AA9} = {6BFFFD12-B2CA-41B1-9B1F-3B1B9E712B7B}
 	EndGlobalSection
 EndGlobal
