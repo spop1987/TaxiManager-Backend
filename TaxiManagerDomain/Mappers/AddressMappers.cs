@@ -15,5 +15,17 @@ namespace TaxiManagerDomain.Mappers
                 Zipcode = address.Zipcode
             };
         }
+
+        public static Address ToAddress(this AddressDto addressDto)
+        {
+            return new Address
+            {
+                PlaceName = addressDto.PlaceName,
+                City = addressDto.City,
+                State = addressDto.State,
+                Zipcode = addressDto.Zipcode,
+                Street = addressDto.Street
+            };
+        }
     }
 }

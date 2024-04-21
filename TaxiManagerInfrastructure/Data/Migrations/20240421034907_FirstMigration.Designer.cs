@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaxiManagerInfrastructure;
 
@@ -11,9 +12,11 @@ using TaxiManagerInfrastructure;
 namespace TaxiManagerInfrastructure.Data.Migrations
 {
     [DbContext(typeof(TaxiManagerContext))]
-    partial class TaxiManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240421034907_FirstMigration")]
+    partial class FirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

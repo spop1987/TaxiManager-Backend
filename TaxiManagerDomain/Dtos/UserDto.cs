@@ -11,6 +11,5 @@ namespace TaxiManagerDomain.Dtos
         public DateTime? UpdateDate { get; set; }
         public DateTime? DeleteDate { get; set; }
         public List<AddressDto> Addresses {get; set;}
-
     }
 }

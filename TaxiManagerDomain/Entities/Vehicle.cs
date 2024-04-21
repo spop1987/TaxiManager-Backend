@@ -9,5 +9,6 @@ namespace TaxiManagerDomain.Entities
         public string Year { get; set; }
         public string Nickname { get; set; }
         public virtual List<Enrollment> Enrollments { get; set; } = [];
+        public virtual List<Maintenance> Maintenances { get; set; } = [];
     }
 }

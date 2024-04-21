@@ -16,5 +16,6 @@ namespace TaxiManagerDomain.Errors
     {
         ValidationException = 100,
         NotFoundException = 200,
+        ApplicationException = 300
     }
 }

@@ -22,6 +22,7 @@ namespace TaxiManager.Api.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<IAutoPartService, AutoPartService>();
             services.AddScoped(typeof(IQueries<>), typeof(Queries<>));
             services.AddScoped(typeof(ICommands<>), typeof(Commands<>));
 

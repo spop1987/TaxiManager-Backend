@@ -19,6 +19,7 @@ namespace TaxiManagerDomain.Entities.TypeConfig
             builder.Property(v => v.UpdateDate).HasColumnType("dateTime");
             builder.Property(v => v.DeleteDate).HasColumnType("dateTime");
             builder.HasMany(v => v.Enrollments).WithOne(e => e.Vehicle).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(v => v.Maintenances).WithOne(e => e.Vehicle).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
