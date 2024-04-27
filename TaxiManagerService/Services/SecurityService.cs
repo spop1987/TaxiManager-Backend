@@ -12,13 +12,13 @@ namespace TaxiManagerService.Services
         public readonly string _passwordSalt = "u3#?!YS_Z,u:hKBdz,ef22N5MKe5]J0298wuie#:ans$utj%";
         public readonly string _jwtSecret = "W]za@%r'BE*VAJ4XVuqXst(3kmp0298wuie#:ans$utj%";
 
-        public string GenerateJwtToken(string userId, string userEmail)
+        public string GenerateJwtToken(string userId, string userEmail, string userType)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity([new Claim("id", userId), new Claim("email", userEmail)]),
+                Subject = new ClaimsIdentity([new Claim("id", userId), new Claim("email", userEmail), new Claim(ClaimTypes.Role, userType)]),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

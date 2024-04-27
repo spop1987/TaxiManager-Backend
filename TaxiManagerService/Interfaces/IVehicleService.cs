@@ -4,7 +4,9 @@ namespace TaxiManagerService.Interfaces
 {
     public interface IVehicleService
     {
-        Task<Guid> AddVehicle(VehicleDto vehicleDto);
+        Task<Guid> CreateVehicle(VehicleDto vehicleDto);
         Task<List<VehicleDto>> GetAllVehicles();
+        Task<VehicleDto> GetVehicleByDriverId(Guid driverId);
+
     }
 }

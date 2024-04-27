@@ -18,11 +18,12 @@ namespace TaxiManager.Api.Extensions
                 opts.UseSqlServer(config.GetConnectionString("TaxiManagement"));
             });
             services.AddScoped<IUserSpecification>(_ => new UserSpecification(x => string.IsNullOrEmpty(x.FirstName)));
-            services.AddScoped<IVehicleSpecification>(_ => new VehicleSpecification(string.Empty));
+            services.AddScoped<IVehicleSpecification>(_ => new VehicleSpecification(x => string.IsNullOrEmpty(x.Registration)));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddTransient<ISecurityService, SecurityService>();
             services.AddTransient<IAutoPartService, AutoPartService>();
+            services.AddTransient<IEnrollmentService, EnrollmentService>();
             services.AddScoped(typeof(IQueries<>), typeof(Queries<>));
             services.AddScoped(typeof(ICommands<>), typeof(Commands<>));
 

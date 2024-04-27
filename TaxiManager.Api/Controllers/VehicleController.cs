@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TaxiManager.Api.Middleware;
+using TaxiManagerDomain.Constants;
 using TaxiManagerDomain.Dtos;
 using TaxiManagerService.Interfaces;
 
@@ -9,17 +10,25 @@ namespace TaxiManager.Api.Controllers
     {
         private readonly IVehicleService _vehicleService = vehicleService;
 
+        [TaxiManagerAuthorize(UserTypes.ADMIN)]
         [HttpPost("create")]
-        public async Task<ActionResult<Guid>> AddVehicle(VehicleDto vehicleDto)
+        public async Task<ActionResult<Guid>> CreateVehicle(VehicleDto vehicleDto)
         {
-            return await _vehicleService.AddVehicle(vehicleDto);
+            return await _vehicleService.CreateVehicle(vehicleDto);
         }
 
-        [TaxiManagerAuthorize]
+        [TaxiManagerAuthorize(UserTypes.ADMIN)]
         [HttpGet("getAllVehicles")]
         public async Task<ActionResult<List<VehicleDto>>> GetAllVehicles()
         {
             return await _vehicleService.GetAllVehicles();
+        }
+
+        [TaxiManagerAuthorize(UserTypes.ADMIN, UserTypes.DRIVER)]
+        [HttpGet("getVehicleByDriverId")]
+        public async Task<ActionResult<VehicleDto>> GetVehicleByDriverId(Guid driverId)
+        {
+            return await _vehicleService.GetVehicleByDriverId(driverId);
         }
     }
 }

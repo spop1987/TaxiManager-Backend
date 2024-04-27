@@ -13,11 +13,6 @@ namespace TaxiManagerInfrastructure
             _context = context;
         }
         
-        public User? FindUserByEmail(string email)
-        {
-            return _context.Users.Where(u => u.Email == email).FirstOrDefault();
-        }
-
         public List<T> GetAllEntities()
         {
             return _context.Set<T>().AsQueryable().ToList();

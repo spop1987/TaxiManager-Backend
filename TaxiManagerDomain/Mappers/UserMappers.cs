@@ -21,6 +21,21 @@ namespace TaxiManagerDomain.Mappers
             };
         }
 
+        public static User ToUser(this RegisterDto registerDto, string hashedPassword)
+        {
+            return new User
+            {
+                Email = registerDto.Email,
+                Password = hashedPassword,
+                UserType = registerDto.UserType.ToUpper(),
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                Telephone = registerDto.PhoneNumber,
+                CreateDate = DateTime.UtcNow,
+                NationalId = registerDto.Identification
+            };
+        }
+
         private static List<AddressDto> ToListOfAddressDto(List<Address> addresses)
         {
             List<AddressDto> listOfAddressDto = [];

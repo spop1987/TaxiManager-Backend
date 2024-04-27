@@ -26,7 +26,8 @@ namespace TaxiManagerService.Services
         #region LoginAndRegister
         public async Task<User> FindByEmailAsync(string email)
         {
-            var user = _queries.FindUserByEmail(email) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
+            var spec = _userSpecification.FindUsersBySpecficications(new UserSpecParamsDto{Email=email});
+            var user = _queries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
             return await Task.FromResult(user);
         }
 
@@ -35,7 +36,8 @@ namespace TaxiManagerService.Services
             if(string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
                 throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Email y contrasena son obligatorios"));
             
-            var userInDb = _queries.FindUserByEmail(loginDto.Email) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
+            var spec = _userSpecification.FindUsersBySpecficications(new UserSpecParamsDto{Email=loginDto.Email});
+            var userInDb = _queries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
 
             var hashedPassword = _securityService.Hash(loginDto.Password);
 
@@ -45,7 +47,7 @@ namespace TaxiManagerService.Services
             var response = new AuthenticationDto
             {
                 User = userInDb.ToUserDto(),
-                AccessToken = _securityService.GenerateJwtToken(userInDb.Id.ToString(), userInDb.Email)
+                AccessToken = _securityService.GenerateJwtToken(userInDb.Id.ToString(), userInDb.Email, userInDb.UserType)
             };
 
             return await Task.FromResult(response);
@@ -68,24 +70,15 @@ namespace TaxiManagerService.Services
 
             var hashedPassword = _securityService.Hash(registerDto.Password);
 
-            var newUser = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = registerDto.Email,
-                Password = hashedPassword,
-                UserType = registerDto.UserType.ToUpper(),
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
-                Telephone = registerDto.PhoneNumber,
-                CreateDate = DateTime.UtcNow
-            };
+            var newUser = registerDto.ToUser(hashedPassword);
+            newUser.Id = Guid.NewGuid();
 
             _commands.AddEntity(newUser);
 
             var authenticationResponse = new AuthenticationDto
             {
                 User = newUser.ToUserDto(),
-                AccessToken = _securityService.GenerateJwtToken(newUser.Id.ToString(), newUser.Email)
+                AccessToken = _securityService.GenerateJwtToken(newUser.Id.ToString(), newUser.Email, newUser.UserType)
             };
             return await Task.FromResult(authenticationResponse);
         }

@@ -13,8 +13,6 @@ namespace TaxiManagerInfrastructure.Specifications
             AddInclude(u => u.Addresses);
         }
 
-        public UserSpecification(Guid id) : base(u => u.Id == id){}
-
         public UserSpecification FindDriverBySpecification(DriverSpecParamsDto driverSpecParamsDto)
         {
             if(!string.IsNullOrEmpty(driverSpecParamsDto.FirstName) && !string.IsNullOrEmpty(driverSpecParamsDto.LastName))
@@ -31,7 +29,7 @@ namespace TaxiManagerInfrastructure.Specifications
 
         public UserSpecification FindUserById(Guid id)
         {
-            return new UserSpecification(id);
+            return new UserSpecification(u => u.Id == id);
         }
 
         public UserSpecification FindUsersBySpecficications(UserSpecParamsDto userSpecParamsDto)

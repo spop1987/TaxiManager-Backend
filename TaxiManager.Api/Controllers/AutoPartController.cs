@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using TaxiManager.Api.Middleware;
+using TaxiManagerDomain.Constants;
 using TaxiManagerDomain.Dtos;
 using TaxiManagerService.Interfaces;
 
@@ -13,6 +15,7 @@ namespace TaxiManager.Api.Controllers
             _autoPartService = autoPartService;
         }
 
+        [TaxiManagerAuthorize(UserTypes.ADMIN)]
         [HttpPost("create")]
         public async Task<ActionResult<Guid>> AddAutoPart(AutoPartDto autoPartDto)
         {
