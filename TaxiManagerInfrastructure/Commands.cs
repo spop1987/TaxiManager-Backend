@@ -1,4 +1,5 @@
 using TaxiManagerDomain.Entities;
+using TaxiManagerDomain.Errors;
 using TaxiManagerInfrastructure.Interfaces;
 
 namespace TaxiManagerInfrastructure
@@ -14,8 +15,19 @@ namespace TaxiManagerInfrastructure
 
         public void AddEntity(T entity)
         {
-            _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                _context.Set<T>().Add(entity);
+                _context.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.DatabaseException, ex.Message));
+            }
+            
         }
     }
 }

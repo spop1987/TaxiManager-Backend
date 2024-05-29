@@ -33,7 +33,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("dateTime");
@@ -49,11 +50,13 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Street")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("dateTime");
@@ -63,7 +66,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("Zipcode")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar");
 
                     b.HasKey("Id");
 
@@ -88,7 +92,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("AutoPartName")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -162,7 +167,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("varchar(500)");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime?>("EndDate")
                         .IsRequired()
@@ -190,6 +196,29 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                     b.ToTable("Maintenance", (string)null);
                 });
 
+            modelBuilder.Entity("TaxiManagerDomain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
             modelBuilder.Entity("TaxiManagerDomain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -204,33 +233,38 @@ namespace TaxiManagerInfrastructure.Data.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
-                    b.Property<int>("NationalId")
-                        .HasColumnType("int");
+                    b.Property<long>("NationalId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Telephone")
-                        .HasColumnType("varchar(12)");
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("dateTime");
 
-                    b.Property<string>("UserType")
-                        .HasColumnType("varchar(10)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "NationalId" }, "IX_User_NationalId")
+                        .IsUnique();
 
                     b.ToTable("User", (string)null);
                 });
@@ -242,7 +276,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brand")
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("dateTime");
@@ -251,27 +286,50 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                         .HasColumnType("dateTime");
 
                     b.Property<string>("Model")
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Nickname")
-                        .HasColumnType("varchar(20)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Registration")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("dateTime");
 
                     b.Property<string>("VehicleType")
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Year")
-                        .HasColumnType("varchar(4)");
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar");
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "Registration" }, "IX_Vehicle_Registration")
+                        .IsUnique();
+
                     b.ToTable("Vehicle", (string)null);
+                });
+
+            modelBuilder.Entity("UserRole", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RoleId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("TaxiManagerDomain.Entities.Address", b =>
@@ -314,7 +372,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                                 .HasColumnType("decimal(18,2)");
 
                             b1.Property<string>("Currency")
-                                .HasColumnType("varchar(3)");
+                                .HasMaxLength(3)
+                                .HasColumnType("varchar");
 
                             b1.HasKey("AutoPartId");
 
@@ -334,12 +393,14 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                     b.HasOne("TaxiManagerDomain.Entities.User", "Driver")
                         .WithMany("Enrollments")
                         .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Enrollment_Driver");
 
                     b.HasOne("TaxiManagerDomain.Entities.Vehicle", "Vehicle")
                         .WithMany("Enrollments")
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Enrollment_Vehicle");
 
                     b.Navigation("Driver");
 
@@ -362,7 +423,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                                 .HasColumnType("decimal(18,2)");
 
                             b1.Property<string>("Currency")
-                                .HasColumnType("varchar(3)");
+                                .HasMaxLength(3)
+                                .HasColumnType("varchar");
 
                             b1.HasKey("MaintenanceId");
 
@@ -381,7 +443,8 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                                 .HasColumnType("decimal(18,2)");
 
                             b1.Property<string>("Currency")
-                                .HasColumnType("varchar(3)");
+                                .HasMaxLength(3)
+                                .HasColumnType("varchar");
 
                             b1.HasKey("MaintenanceId");
 
@@ -396,6 +459,23 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                     b.Navigation("TotalPrice");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("UserRole", b =>
+                {
+                    b.HasOne("TaxiManagerDomain.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRole_RoleId");
+
+                    b.HasOne("TaxiManagerDomain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRole_UserId");
                 });
 
             modelBuilder.Entity("TaxiManagerDomain.Entities.AutoPart", b =>

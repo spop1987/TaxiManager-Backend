@@ -6,7 +6,7 @@ namespace TaxiManagerDomain.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string UserType { get; set; }
+        public List<string> UserTypes { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public DateTime? DeleteDate { get; set; }

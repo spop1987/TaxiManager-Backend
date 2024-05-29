@@ -11,20 +11,21 @@ namespace TaxiManagerInfrastructure.Specifications
         public UserSpecification(Expression<Func<User, bool>> expression) : base(expression)
         {
             AddInclude(u => u.Addresses);
+            AddInclude(u => u.Roles);
         }
 
         public UserSpecification FindDriverBySpecification(DriverSpecParamsDto driverSpecParamsDto)
         {
             if(!string.IsNullOrEmpty(driverSpecParamsDto.FirstName) && !string.IsNullOrEmpty(driverSpecParamsDto.LastName))
-                return new UserSpecification(u => u.FirstName.Contains(driverSpecParamsDto.FirstName) && u.LastName.Contains(driverSpecParamsDto.LastName) && u.UserType == driverSpecParamsDto.UserType);
+                return new UserSpecification(u => u.FirstName.Contains(driverSpecParamsDto.FirstName) && u.LastName.Contains(driverSpecParamsDto.LastName) && u.Roles.Any(r => r.Name == driverSpecParamsDto.UserType));
             
             if(!string.IsNullOrEmpty(driverSpecParamsDto.Email))
-                return new UserSpecification(u => u.Email == driverSpecParamsDto.Email && u.UserType == driverSpecParamsDto.UserType);
+                return new UserSpecification(u => u.Email == driverSpecParamsDto.Email && u.Roles.Any(r => r.Name == driverSpecParamsDto.UserType));
             
             if(!string.IsNullOrEmpty(driverSpecParamsDto.Identification))
-                return new UserSpecification(u => u.NationalId == driverSpecParamsDto.Identification.ToInt() && u.UserType == driverSpecParamsDto.UserType);
+                return new UserSpecification(u => u.NationalId == driverSpecParamsDto.Identification.ToInt() && u.Roles.Any(r => r.Name == driverSpecParamsDto.UserType));
             
-            return new UserSpecification(u => u.UserType == driverSpecParamsDto.UserType);
+            return new UserSpecification(u => u.Roles.Any(r => r.Name == driverSpecParamsDto.UserType));
         }
 
         public UserSpecification FindUserById(Guid id)
@@ -43,7 +44,7 @@ namespace TaxiManagerInfrastructure.Specifications
             if(!string.IsNullOrEmpty(userSpecParamsDto.Identification))
                 return new UserSpecification(u => u.NationalId == userSpecParamsDto.Identification.ToInt());
             
-            return new UserSpecification(u => u.UserType == userSpecParamsDto.UserType);
+            return new UserSpecification(u => u.Roles.Any(r => r.Name == userSpecParamsDto.UserType));
         }
     }
 }

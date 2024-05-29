@@ -16,7 +16,7 @@ namespace TaxiManagerDomain.Mappers
                 Email = user.Email,
                 CreateDate = user.CreateDate,
                 UpdateDate = user.UpdateDate,
-                UserType =  user.UserType,
+                UserTypes =  ToUserTypes(user.Roles),
                 Addresses = ToListOfAddressDto(user.Addresses)
             };
         }
@@ -27,7 +27,6 @@ namespace TaxiManagerDomain.Mappers
             {
                 Email = registerDto.Email,
                 Password = hashedPassword,
-                UserType = registerDto.UserType.ToUpper(),
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Telephone = registerDto.PhoneNumber,
@@ -44,6 +43,16 @@ namespace TaxiManagerDomain.Mappers
 
             addresses.ForEach(a => listOfAddressDto.Add(a.ToAddressDto()));
             return listOfAddressDto;
+        }
+
+        private static List<string> ToUserTypes(List<Role> roles)
+        {
+            List<string> listOfUserType = [];
+            if(roles.Count == 0)
+                return listOfUserType;
+            
+            roles.ForEach(r => listOfUserType.Add(r.Name.ToUpper()));
+            return listOfUserType;
         }
     }
 }

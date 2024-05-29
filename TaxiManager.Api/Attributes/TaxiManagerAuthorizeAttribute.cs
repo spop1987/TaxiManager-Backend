@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TaxiManagerDomain.Entities;
 
-namespace TaxiManager.Api.Middleware
+namespace TaxiManager.Api.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class TaxiManagerAuthorizeAttribute : Attribute, IAuthorizationFilter
@@ -16,7 +16,7 @@ namespace TaxiManager.Api.Middleware
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var user = (User)context.HttpContext.Items["User"];
-            if(user == null || !_userTypes.Contains(user.UserType))
+            if(user == null || !user.Roles.Any(r => _userTypes.Contains(r.Name)))
                 context.Result = new JsonResult(new {message = "Unauthorized"}){StatusCode = StatusCodes.Status401Unauthorized};
         }
     }

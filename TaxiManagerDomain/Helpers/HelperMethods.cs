@@ -10,12 +10,13 @@ namespace TaxiManagerDomain.Helpers
             return 0;
         } 
 
-        public static string Stringify(this int value)
+        public static string Stringify(this long value)
         {
             if(value > 0)
                 return value.ToString();
             
             return string.Empty;
         }
+
     }
 }

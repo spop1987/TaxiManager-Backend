@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TaxiManager.Api.Middleware;
+using TaxiManager.Api.Attributes;
 using TaxiManagerDomain.Constants;
 using TaxiManagerDomain.Dtos;
 using TaxiManagerService.Interfaces;

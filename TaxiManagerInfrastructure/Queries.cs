@@ -25,8 +25,7 @@ namespace TaxiManagerInfrastructure
 
         public T? GetEntityBySpec(ISpecification<T> spec)
         {
-            var algo = ApplySpecification(spec);
-            var response = algo.ToList();
+            var response = ApplySpecification(spec).ToList();
             return response.FirstOrDefault();
         }
 

@@ -10,24 +10,26 @@ namespace TaxiManagerService.Services
 {
     public class UserService : IUserService
     {
-        private readonly IQueries<User> _queries;
-        private readonly ICommands<User> _commands;
+        private readonly IQueries<User> _userQueries;
+        private readonly IQueries<Role> _roleQueries;
+        private readonly ICommands<User> _userCommands;
         private readonly ISecurityService _securityService;
-        private readonly IUserSpecification _userSpecification;
+        private readonly IUserSpecification _specificationUser;
 
-        public UserService(IQueries<User> queries, ICommands<User> commands, ISecurityService securityService, IUserSpecification userSpecification)
+        public UserService(IQueries<User> userQueries, IQueries<Role> roleQueries, ICommands<User> userCommands, ISecurityService securityService, IUserSpecification specificationUser)
         {
-            _queries = queries;
-            _commands = commands;
+            _userQueries = userQueries;
+            _roleQueries = roleQueries;
+            _userCommands = userCommands;
             _securityService = securityService;
-            _userSpecification = userSpecification;
+            _specificationUser = specificationUser;
         }
 
         #region LoginAndRegister
         public async Task<User> FindByEmailAsync(string email)
         {
-            var spec = _userSpecification.FindUsersBySpecficications(new UserSpecParamsDto{Email=email});
-            var user = _queries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
+            var spec = _specificationUser.FindUsersBySpecficications(new UserSpecParamsDto{Email=email});
+            var user = _userQueries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
             return await Task.FromResult(user);
         }
 
@@ -36,8 +38,8 @@ namespace TaxiManagerService.Services
             if(string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
                 throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Email y contrasena son obligatorios"));
             
-            var spec = _userSpecification.FindUsersBySpecficications(new UserSpecParamsDto{Email=loginDto.Email});
-            var userInDb = _queries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
+            var spec = _specificationUser.FindUsersBySpecficications(new UserSpecParamsDto{Email=loginDto.Email});
+            var userInDb = _userQueries.GetEntityBySpec(spec) ?? throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Usuario no existe"));
 
             var hashedPassword = _securityService.Hash(loginDto.Password);
 
@@ -47,7 +49,7 @@ namespace TaxiManagerService.Services
             var response = new AuthenticationDto
             {
                 User = userInDb.ToUserDto(),
-                AccessToken = _securityService.GenerateJwtToken(userInDb.Id.ToString(), userInDb.Email, userInDb.UserType)
+                AccessToken = _securityService.GenerateJwtToken(userInDb)
             };
 
             return await Task.FromResult(response);
@@ -58,12 +60,21 @@ namespace TaxiManagerService.Services
             if (IsRegisterValid(registerDto))
                 throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Todos los campos son obligatorios (Email, Contraseña, Nombre(s), Apellido(s) y Celular)"));
 
-            if (!UserTypes.ListOfUserTypes.Contains(registerDto.UserType.ToUpper())) 
-                throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Tipo de usuario invalido"));
+            registerDto.UserTypes.ForEach(u => {
+                if(!UserTypes.ListOfUserTypes.Contains(u.ToUpper()))
+                    throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Tipo de usuario invalido"));
+            }); 
 
-            var spec = _userSpecification.FindUsersBySpecficications(new UserSpecParamsDto {Email = registerDto.Email});
+            var rolesInDb = _roleQueries.GetAllEntities();
 
-            var userInDb = _queries.GetEntityBySpec(spec);
+            if (rolesInDb.Count == 0)
+                throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.NotFoundException, "No hay roles en la base de datos"));
+                    
+            var rolesForUser = rolesInDb.Where(r => registerDto.UserTypes.Contains(r.Name)).ToList();
+
+            var spec = _specificationUser.FindUsersBySpecficications(new UserSpecParamsDto {Email = registerDto.Email});
+
+            var userInDb = _userQueries.GetEntityBySpec(spec);
             
             if(userInDb != null) 
                 throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.ValidationException, "Email esta en uso"));
@@ -72,22 +83,30 @@ namespace TaxiManagerService.Services
 
             var newUser = registerDto.ToUser(hashedPassword);
             newUser.Id = Guid.NewGuid();
+            newUser.Roles = rolesForUser;
 
-            _commands.AddEntity(newUser);
-
-            var authenticationResponse = new AuthenticationDto
+            try
             {
-                User = newUser.ToUserDto(),
-                AccessToken = _securityService.GenerateJwtToken(newUser.Id.ToString(), newUser.Email, newUser.UserType)
-            };
-            return await Task.FromResult(authenticationResponse);
+                _userCommands.AddEntity(newUser);
+
+                var authenticationResponse = new AuthenticationDto
+                {
+                    User = newUser.ToUserDto(),
+                    AccessToken = _securityService.GenerateJwtToken(newUser)
+                };
+                return await Task.FromResult(authenticationResponse);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<User> FindByIdAsync(Guid id)
         {
-            var spec = _userSpecification.FindUserById(id);
+            var spec = _specificationUser.FindUserById(id);
 
-            var user = _queries.GetEntityBySpec(spec);
+            var user = _userQueries.GetEntityBySpec(spec);
 
             if (user != null)
                 return await Task.FromResult(user);
@@ -100,9 +119,9 @@ namespace TaxiManagerService.Services
         #region Drivers
         public Task<List<UserDto>> GetAllDrivers(DriverSpecParamsDto driverSpecParamsDto)
         {
-            var spec = _userSpecification.FindDriverBySpecification(driverSpecParamsDto);
+            var spec = _specificationUser.FindDriverBySpecification(driverSpecParamsDto);
 
-            var listOfDrivers = _queries.GetEntitiesBySpec(spec);
+            var listOfDrivers = _userQueries.GetEntitiesBySpec(spec);
 
             if(listOfDrivers.Count == 0)
                 throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.NotFoundException, "No hay conductores registrados"));
@@ -116,9 +135,9 @@ namespace TaxiManagerService.Services
 
         public Task<UserDto> GetDriver(DriverSpecParamsDto driverSpecParamsDto)
         {
-            var spec = _userSpecification.FindDriverBySpecification(driverSpecParamsDto);
+            var spec = _specificationUser.FindDriverBySpecification(driverSpecParamsDto);
 
-            var driver = _queries.GetEntityBySpec(spec);
+            var driver = _userQueries.GetEntityBySpec(spec);
 
             if(driver != null)
                 return Task.FromResult(driver.ToUserDto());

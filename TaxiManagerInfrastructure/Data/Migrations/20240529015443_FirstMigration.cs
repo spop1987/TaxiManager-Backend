@@ -12,17 +12,31 @@ namespace TaxiManagerInfrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Role",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NationalId = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "varchar(100)", nullable: false),
-                    LastName = table.Column<string>(type: "varchar(100)", nullable: false),
-                    Email = table.Column<string>(type: "varchar(100)", nullable: false),
-                    Password = table.Column<string>(type: "varchar(100)", nullable: false),
-                    UserType = table.Column<string>(type: "varchar(10)", nullable: true),
-                    Telephone = table.Column<string>(type: "varchar(12)", nullable: true),
+                    NationalId = table.Column<long>(type: "bigint", nullable: false),
+                    FirstName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Password = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Telephone = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: true),
                     CreateDate = table.Column<DateTime>(type: "dateTime", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "dateTime", nullable: true),
                     DeleteDate = table.Column<DateTime>(type: "dateTime", nullable: true)
@@ -37,12 +51,12 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    VehicleType = table.Column<string>(type: "varchar(10)", nullable: true),
-                    Registration = table.Column<string>(type: "varchar(10)", nullable: false),
-                    Brand = table.Column<string>(type: "varchar(10)", nullable: true),
-                    Model = table.Column<string>(type: "varchar(10)", nullable: true),
-                    Year = table.Column<string>(type: "varchar(4)", nullable: true),
-                    Nickname = table.Column<string>(type: "varchar(20)", nullable: true),
+                    VehicleType = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true),
+                    Registration = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
+                    Brand = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true),
+                    Model = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true),
+                    Year = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true),
+                    Nickname = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
                     CreateDate = table.Column<DateTime>(type: "dateTime", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "dateTime", nullable: true),
                     DeleteDate = table.Column<DateTime>(type: "dateTime", nullable: true)
@@ -50,6 +64,30 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vehicle", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRole",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRole", x => new { x.RoleId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserRole_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRole_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,13 +108,13 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_Enrollment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Enrollment_User_DriverId",
+                        name: "FK_Enrollment_Driver",
                         column: x => x.DriverId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Enrollment_Vehicle_VehicleId",
+                        name: "FK_Enrollment_Vehicle",
                         column: x => x.VehicleId,
                         principalTable: "Vehicle",
                         principalColumn: "Id",
@@ -89,14 +127,14 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VehicleMileage = table.Column<long>(type: "bigint", nullable: false),
-                    Description = table.Column<string>(type: "varchar(500)", nullable: false),
+                    Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
                     StartDate = table.Column<DateTime>(type: "dateTime", nullable: false),
                     EndDate = table.Column<DateTime>(type: "dateTime", nullable: false),
                     IsRepair = table.Column<bool>(type: "bit", nullable: false),
                     TotalPrice_Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    TotalPrice_Currency = table.Column<string>(type: "varchar(3)", nullable: true),
+                    TotalPrice_Currency = table.Column<string>(type: "varchar(3)", maxLength: 3, nullable: true),
                     LaborPrice_Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    LaborPrice_Currency = table.Column<string>(type: "varchar(3)", nullable: true),
+                    LaborPrice_Currency = table.Column<string>(type: "varchar(3)", maxLength: 3, nullable: true),
                     VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -118,9 +156,9 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AutoPartName = table.Column<string>(type: "varchar(50)", nullable: false),
+                    AutoPartName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     Price_Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Price_Currency = table.Column<string>(type: "varchar(3)", nullable: true),
+                    Price_Currency = table.Column<string>(type: "varchar(3)", maxLength: 3, nullable: true),
                     MaintenanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -143,10 +181,10 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlaceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Street = table.Column<string>(type: "varchar(100)", nullable: false),
-                    City = table.Column<string>(type: "varchar(100)", nullable: false),
-                    State = table.Column<string>(type: "varchar(100)", nullable: false),
-                    Zipcode = table.Column<string>(type: "varchar(10)", nullable: false),
+                    Street = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    City = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    State = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Zipcode = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MaintenanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AutoPartId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -213,6 +251,23 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 name: "IX_Maintenance_VehicleId",
                 table: "Maintenance",
                 column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_NationalId",
+                table: "User",
+                column: "NationalId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRole_UserId",
+                table: "UserRole",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicle_Registration",
+                table: "Vehicle",
+                column: "Registration",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -225,7 +280,13 @@ namespace TaxiManagerInfrastructure.Data.Migrations
                 name: "Enrollment");
 
             migrationBuilder.DropTable(
+                name: "UserRole");
+
+            migrationBuilder.DropTable(
                 name: "AutoPart");
+
+            migrationBuilder.DropTable(
+                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "User");

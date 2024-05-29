@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
+using TaxiManagerDomain.Entities;
+using TaxiManagerService.Extensions;
 using TaxiManagerService.Interfaces;
 
 namespace TaxiManagerService.Services
@@ -12,13 +14,14 @@ namespace TaxiManagerService.Services
         public readonly string _passwordSalt = "u3#?!YS_Z,u:hKBdz,ef22N5MKe5]J0298wuie#:ans$utj%";
         public readonly string _jwtSecret = "W]za@%r'BE*VAJ4XVuqXst(3kmp0298wuie#:ans$utj%";
 
-        public string GenerateJwtToken(string userId, string userEmail, string userType)
+        public string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSecret);
+            var claims = user.GetClaims();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity([new Claim("id", userId), new Claim("email", userEmail), new Claim(ClaimTypes.Role, userType)]),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
