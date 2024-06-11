@@ -10,6 +10,7 @@ namespace TaxiManagerDomain.Mappers
         {
             return new UserDto
             {
+                Id = user.Id,
                 Identification = user.NationalId.Stringify(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -17,7 +18,9 @@ namespace TaxiManagerDomain.Mappers
                 CreateDate = user.CreateDate,
                 UpdateDate = user.UpdateDate,
                 UserTypes =  ToUserTypes(user.Roles),
-                Addresses = ToListOfAddressDto(user.Addresses)
+                Addresses = ToListOfAddressDto(user.Addresses),
+                DateOfBirth = user.DateOfBirth,
+                DriverLicense = ToDriverLicenseDto(user.DriverLicense)   
             };
         }
 
@@ -25,13 +28,14 @@ namespace TaxiManagerDomain.Mappers
         {
             return new User
             {
-                Email = registerDto.Email,
-                Password = hashedPassword,
+                NationalId = registerDto.Identification,
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
+                DateOfBirth = registerDto.DateOfBirth.ToDateTime(),
+                Email = registerDto.Email,
+                Password = hashedPassword,
                 Telephone = registerDto.PhoneNumber,
-                CreateDate = DateTime.UtcNow,
-                NationalId = registerDto.Identification
+                CreateDate = DateTime.UtcNow
             };
         }
 
@@ -54,5 +58,22 @@ namespace TaxiManagerDomain.Mappers
             roles.ForEach(r => listOfUserType.Add(r.Name.ToUpper()));
             return listOfUserType;
         }
+
+        private static DriverLicenseDto ToDriverLicenseDto(DriverLicense driverLicense)
+        {
+            if(driverLicense == null)
+                return null;
+
+            var driverLicenseDto = new DriverLicenseDto
+            {
+                Category = driverLicense.Category,
+                Number = driverLicense.Number,
+                ExpiredDate = driverLicense.ExpiredDate,
+                ExpeditionDate = driverLicense.ExpeditionDate
+            };
+
+            return driverLicenseDto;
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TaxiManagerDomain.Entities;
+using TaxiManagerDomain.Errors;
 
 namespace TaxiManager.Api.Attributes
 {
@@ -17,7 +18,8 @@ namespace TaxiManager.Api.Attributes
         {
             var user = (User)context.HttpContext.Items["User"];
             if(user == null || !user.Roles.Any(r => _userTypes.Contains(r.Name)))
-                context.Result = new JsonResult(new {message = "Unauthorized"}){StatusCode = StatusCodes.Status401Unauthorized};
+                context.Result = new JsonResult(new {message = "User Unauthorized", errorCode = ErrorNumber.UnauthorizedAccessException}){StatusCode = StatusCodes.Status401Unauthorized};
+            
         }
     }
 }

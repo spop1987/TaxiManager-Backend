@@ -13,14 +13,16 @@ namespace TaxiManagerService.Services
         private readonly IQueries<User> _userQueries;
         private readonly IQueries<Role> _roleQueries;
         private readonly ICommands<User> _userCommands;
+        private readonly ICommands<DriverLicense> _driverLicenseCommands;
         private readonly ISecurityService _securityService;
         private readonly IUserSpecification _specificationUser;
 
-        public UserService(IQueries<User> userQueries, IQueries<Role> roleQueries, ICommands<User> userCommands, ISecurityService securityService, IUserSpecification specificationUser)
+        public UserService(IQueries<User> userQueries, IQueries<Role> roleQueries, ICommands<User> userCommands, ICommands<DriverLicense> driverLicenseCommands, ISecurityService securityService, IUserSpecification specificationUser)
         {
             _userQueries = userQueries;
             _roleQueries = roleQueries;
             _userCommands = userCommands;
+            _driverLicenseCommands = driverLicenseCommands;
             _securityService = securityService;
             _specificationUser = specificationUser;
         }
@@ -88,18 +90,30 @@ namespace TaxiManagerService.Services
             try
             {
                 _userCommands.AddEntity(newUser);
-
-                var authenticationResponse = new AuthenticationDto
-                {
-                    User = newUser.ToUserDto(),
-                    AccessToken = _securityService.GenerateJwtToken(newUser)
-                };
-                return await Task.FromResult(authenticationResponse);
             }
             catch
             {
                 throw;
             }
+
+            var newDriverLicense = registerDto.DriverLicense.ToDriverLicense();
+            newDriverLicense.UserId = newUser.Id;
+
+            try
+            {
+                _driverLicenseCommands.AddEntity(newDriverLicense);
+            }
+            catch
+            {
+                throw;
+            }
+
+            var authenticationResponse = new AuthenticationDto
+            {
+                User = newUser.ToUserDto(),
+                AccessToken = _securityService.GenerateJwtToken(newUser)
+            };
+            return await Task.FromResult(authenticationResponse);
         }
 
         public async Task<User> FindByIdAsync(Guid id)
@@ -150,11 +164,14 @@ namespace TaxiManagerService.Services
         #region PrivateMethods
         private static bool IsRegisterValid(RegisterDto registerDto)
         {
-            return string.IsNullOrEmpty(registerDto.Email) ||
-                            string.IsNullOrEmpty(registerDto.Password) ||
-                            string.IsNullOrEmpty(registerDto.FirstName) ||
-                            string.IsNullOrEmpty(registerDto.LastName) ||
-                            string.IsNullOrEmpty(registerDto.PhoneNumber);
+            return string.IsNullOrWhiteSpace(registerDto.Email) ||
+                            string.IsNullOrWhiteSpace(registerDto.Password) ||
+                            string.IsNullOrWhiteSpace(registerDto.FirstName) ||
+                            string.IsNullOrWhiteSpace(registerDto.LastName) ||
+                            string.IsNullOrWhiteSpace(registerDto.PhoneNumber) ||
+                            string.IsNullOrWhiteSpace(registerDto.DateOfBirth) ||
+                            string.IsNullOrWhiteSpace(registerDto.DriverLicense.Number) ||
+                            string.IsNullOrWhiteSpace(registerDto.DriverLicense.Category);
         }
 
         #endregion

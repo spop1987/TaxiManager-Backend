@@ -12,6 +12,7 @@ namespace TaxiManagerInfrastructure.Specifications
         {
             AddInclude(u => u.Addresses);
             AddInclude(u => u.Roles);
+            AddInclude(u => u.DriverLicense);
         }
 
         public UserSpecification FindDriverBySpecification(DriverSpecParamsDto driverSpecParamsDto)

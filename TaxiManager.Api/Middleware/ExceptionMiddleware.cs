@@ -39,12 +39,22 @@ namespace TaxiManager.Api.Middleware
 
         private static int ConfigureExceptionTypes(Exception ex)
         {
-            var httpStatusCode = ex switch
+            if(ex is TaxiManagerException)
             {
-                var _ when ex is TaxiManagerException => (int)HttpStatusCode.BadRequest,
-                _ => (int)HttpStatusCode.InternalServerError,
-            };
-            return httpStatusCode;
+                _ = int.TryParse(ex.Message.Split(",")[0], out int erroCode);
+                var httpStatusCode = erroCode switch
+                {
+                    (int)ErrorNumber.ValidationException => (int)HttpStatusCode.BadRequest,
+                    (int)ErrorNumber.NotFoundException => (int)HttpStatusCode.NotFound,
+                    (int)ErrorNumber.UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+                    (int)ErrorNumber.ForbiddenAccessException => (int)HttpStatusCode.Forbidden,
+                    (int)ErrorNumber.DatabaseException => (int)HttpStatusCode.InternalServerError,
+                    _ => (int)HttpStatusCode.InternalServerError,
+                };
+                return httpStatusCode;
+            }
+            else
+                return (int)HttpStatusCode.InternalServerError;
         }
     }
 }

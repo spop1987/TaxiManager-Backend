@@ -21,11 +21,13 @@ namespace TaxiManagerInfrastructure
                 _context.Set<T>().Add(entity);
                 _context.SaveChanges();
                 transaction.Commit();
+                transaction.Dispose();
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.DatabaseException, ex.Message));
+                transaction.Dispose();
+                throw new TaxiManagerException(new TaxiManagerError(ErrorNumber.DatabaseException, $"Message: {ex.Message}, InnerException Message: {ex?.InnerException?.Message}"));
             }
             
         }

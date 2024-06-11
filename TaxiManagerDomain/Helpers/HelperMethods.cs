@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace TaxiManagerDomain.Helpers
 {
     public static class HelperMethods
@@ -18,5 +20,11 @@ namespace TaxiManagerDomain.Helpers
             return string.Empty;
         }
 
+        public static DateTime ToDateTime(this string value)
+        {
+            if(string.IsNullOrEmpty(value)) return DateTime.MinValue;
+
+            return DateTime.ParseExact(value, "yyyy/MM/dd", CultureInfo.InvariantCulture);
+        }
     }
 }

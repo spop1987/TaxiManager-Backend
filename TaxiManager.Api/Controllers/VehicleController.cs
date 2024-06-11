@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxiManager.Api.Attributes;
 using TaxiManagerDomain.Constants;
@@ -26,7 +27,7 @@ namespace TaxiManager.Api.Controllers
 
         [TaxiManagerAuthorize(UserTypes.ADMIN, UserTypes.DRIVER)]
         [HttpGet("getVehicleByDriverId")]
-        public async Task<ActionResult<VehicleDto>> GetVehicleByDriverId(Guid driverId)
+        public async Task<ActionResult<VehicleDto>> GetVehicleByDriverId([FromQuery] Guid driverId)
         {
             return await _vehicleService.GetVehicleByDriverId(driverId);
         }

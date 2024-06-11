@@ -8,10 +8,11 @@ namespace TaxiManagerDomain.Entities.TypeConfig
         {
             modelBuilder.ApplyConfiguration(new AddressTypeConfig());
             modelBuilder.ApplyConfiguration(new AutoPartTypeConfig());
+            modelBuilder.ApplyConfiguration(new DriverLicenseTypeConfig());
             modelBuilder.ApplyConfiguration(new EnrollmentTypeConfig());
             modelBuilder.ApplyConfiguration(new MaintenanceTypeConfig());
             modelBuilder.ApplyConfiguration(new UserTypeConfig());
-            modelBuilder.ApplyConfiguration(new  VehicleTypeConfig());
+            modelBuilder.ApplyConfiguration(new VehicleTypeConfig());
         }
     }
 }

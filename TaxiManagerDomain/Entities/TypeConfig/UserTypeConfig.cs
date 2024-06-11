@@ -12,6 +12,7 @@ namespace TaxiManagerDomain.Entities.TypeConfig
             builder.Property(u => u.NationalId).IsRequired();
             builder.Property(u => u.FirstName).IsRequired().HasColumnType("varchar").HasMaxLength(100);
             builder.Property(u => u.LastName).IsRequired().HasColumnType("varchar").HasMaxLength(100);
+            builder.Property(u => u.DateOfBirth).HasColumnType("dateTime");
             builder.Property(u => u.Email).IsRequired().HasColumnType("varchar").HasMaxLength(100);
             builder.Property(u => u.Password).IsRequired().HasColumnType("varchar").HasMaxLength(100);
             builder.Property(u => u.CreateDate).HasColumnType("dateTime");
@@ -21,6 +22,7 @@ namespace TaxiManagerDomain.Entities.TypeConfig
             builder.HasIndex(u => u.NationalId, "IX_User_NationalId").IsUnique();
             builder.HasMany(u => u.Addresses).WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(u => u.Enrollments).WithOne(e => e.Driver).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(u => u.DriverLicense).WithOne(d => d.Driver).HasForeignKey<DriverLicense>(d => d.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(u => u.Roles).WithMany(r => r.Users)
                 .UsingEntity<Dictionary<string, object>>(
                     "UserRole",

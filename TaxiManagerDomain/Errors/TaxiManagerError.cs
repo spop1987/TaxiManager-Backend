@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace TaxiManagerDomain.Errors
 {
     public class TaxiManagerError
@@ -14,9 +16,11 @@ namespace TaxiManagerDomain.Errors
 
     public enum ErrorNumber
     {
-        ValidationException = 100,
-        NotFoundException = 200,
-        ApplicationException = 300,
-        DatabaseException = 400
+        ValidationException = HttpStatusCode.BadRequest,
+        NotFoundException = HttpStatusCode.NotFound,
+        UnauthorizedAccessException = HttpStatusCode.Unauthorized,
+        ForbiddenAccessException = HttpStatusCode.Forbidden,
+        ApplicationException = HttpStatusCode.InternalServerError,
+        DatabaseException = 100
     }
 }

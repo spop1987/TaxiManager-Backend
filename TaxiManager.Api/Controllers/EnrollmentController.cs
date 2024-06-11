@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxiManager.Api.Attributes;
 using TaxiManagerDomain.Constants;
@@ -15,7 +16,8 @@ namespace TaxiManager.Api.Controllers
            _enrollmentService = enrollmentService;
         }
 
-        [TaxiManagerAuthorize(UserTypes.ADMIN)]
+        [TaxiManagerAuthorize(UserTypes.ADMIN, UserTypes.DRIVER)]
+        [Authorize(policy: "AllowedToDrive")]
         [HttpPost("create")]
         public async Task<ActionResult<Guid>> CreateEnrollment(EnrollmentDto enrollmentDto)
         {

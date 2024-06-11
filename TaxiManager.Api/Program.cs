@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAplicationServices(builder.Configuration);
 
+
 var app = builder.Build();
 
 app.UseMiddleware<JwtMiddleware>();
